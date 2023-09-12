@@ -10,6 +10,10 @@ func _ready():
 	_logger = load("res://addons/GameTemplate/services/logger.gd").new()
 	if _logger:
 		add_child(_logger)
+		
+	## Инициализируем минимальный набор сервисов необходимый в каждой игре
+	resources
+	inventory
 	
 var inventory:Inventory = null :
 	get:

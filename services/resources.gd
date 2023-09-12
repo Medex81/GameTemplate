@@ -6,12 +6,13 @@ class_name Resources
 
 #const _timer_timeout = 0.5
 # Путь к файлам конфигурации интерактивов
-const _addon_resources = "res://addons/GameBackend/"
+const _addon_resources = "res://addons/GameTemplate/"
 const _res_path = "res://"
 const _user_path = "user://"
 const _assets_path = "assets/"
 const _game_path = "game/"
 const _game_locations = "locations"
+const _game_scenes = "scenes"
 const _asset_textures = "textures"
 const _asset_levels = "levels"
 const _asset_items = "items"
@@ -22,12 +23,13 @@ const _script_extension = "gd"
 const _sound_extension = "ogg"
 const _pwd = ""
 const _state_name = "state"
+const _scenes = "scenes"
 
 #var _queue_to_load:PackedStringArray
 var _logs:LoggotLogger = Services.logs
 #var _timer:Timer = null
 #var progress:Array[float]
-var make_game_array:PackedStringArray = [_game_locations]
+var make_game_array:PackedStringArray = [_game_locations, _game_scenes]
 var make_asset_array:PackedStringArray = [_asset_textures, _asset_levels, _asset_items, _asset_containers]
 var state:Dictionary
 
@@ -46,8 +48,25 @@ func _ready():
 			make_dir(get_game_path() + game_dir)
 		for asset_dir in make_asset_array:
 			make_dir(get_assets_path() + asset_dir)
-			
+		#copy_dir_recursive(_addon_resources + _scenes, get_game_path() + _scenes)
 	load_state()
+	
+func copy_dir_recursive(from_dir:String, to_dir:String): ## <--
+	var dir = DirAccess.open(from_dir)
+	if dir:
+		dir.list_dir_begin()
+		while true:
+			var next_item = dir.get_next()
+			if next_item.is_empty():
+				break
+			if dir.current_is_dir() && next_item != "." && next_item != "..":
+				DirAccess.make_dir_absolute(to_dir + "/" + next_item)
+				copy_dir_recursive(dir.get_current_dir() + "/" + next_item + "/", to_dir + "/" + next_item)
+			else:
+				DirAccess.copy_absolute(dir.get_current_dir() + "/" + next_item, to_dir + "/" + next_item)
+		dir.list_dir_end()
+	else:
+		_logs.error("{0} service > An error occurred when trying to access the path {1}".format([name, from_dir]))
 	
 func find_all_files_recursive(find_dir:String, extension:String, paths:Dictionary): ## <--
 	var dir = DirAccess.open(find_dir)
@@ -273,14 +292,9 @@ func find_all_cfg_files_dict(start_dir:String)->Dictionary:
 func find_all_cfg_files_array(start_dir:String)->Array:
 	return find_all_files_dict(start_dir, _cfg_extension).keys()
 	
-
-	
 func find_all_scene_files_array(start_dir:String)->Array:
 	return find_all_files_dict(start_dir, _scene_extension).keys()
-		
-
-
-		
+			
 func remove_file(path:String):
 	DirAccess.remove_absolute(path)
 

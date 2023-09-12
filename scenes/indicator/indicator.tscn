@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://gcome6s1gse4"]
+
+[ext_resource type="Texture2D" uid="uid://b1ibupsnkake0" path="res://addons/GameTemplate/scenes/indicator/indicator2.png" id="1_peils"]
+[ext_resource type="Script" path="res://addons/GameTemplate/scenes/indicator/indicator.gd" id="2_t47px"]
+
+[node name="indicator" type="Sprite2D"]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("1_peils")
+script = ExtResource("2_t47px")
+speed_rad = -0.5
+timer_sec = 0.2
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.2
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

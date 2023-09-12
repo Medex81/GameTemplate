@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://ce8p70vv8hcbu"]
+
+[ext_resource type="Texture2D" uid="uid://ctjwl35vh7r0j" path="res://addons/GameTemplate/scenes/progress/energy_bar_bg.png" id="1_cc20d"]
+[ext_resource type="Texture2D" uid="uid://bpq2q03yljbk0" path="res://addons/GameTemplate/scenes/progress/energy_bar_fill.png" id="2_57axj"]
+
+[node name="progress" type="TextureProgressBar"]
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -606.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+nine_patch_stretch = true
+stretch_margin_left = 10
+stretch_margin_top = 10
+stretch_margin_right = 10
+stretch_margin_bottom = 10
+texture_under = ExtResource("1_cc20d")
+texture_progress = ExtResource("2_57axj")
