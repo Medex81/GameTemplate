@@ -3,7 +3,6 @@ extends BaseService
 
 class_name Resources
 
-#const _timer_timeout = 0.5
 # Путь к файлам конфигурации интерактивов
 const _addon_resources = "res://addons/GameTemplate/"
 const _res_path = "res://"
@@ -23,30 +22,20 @@ const _sound_extension = "ogg"
 const _pwd = ""
 const _state_name = "state"
 const _scenes = "scenes"
+const _copy_to_game = "copy_to_game"
 
-#var _queue_to_load:PackedStringArray
-#var _timer:Timer = null
-#var progress:Array[float]
 var make_game_array:PackedStringArray = [_game_locations, _game_scenes]
 var make_asset_array:PackedStringArray = [_asset_textures, _asset_levels, _asset_items, _asset_containers]
 var state:Dictionary
 
-signal send_resource_loaded(path:String, res:Resource)
-signal send_resource_progress(progress:float)
-
 func _ready():
 	super._ready()
-#	_logs.info("{0} service > ready".format([name]))
-#	_timer = Timer.new()
-#	add_child(_timer)
-#	_timer.wait_time = _timer_timeout
-#	_timer.timeout.connect(_on_timer_timeout)
 	if OS.is_debug_build():
 		for game_dir in make_game_array:
 			make_dir(get_game_path() + game_dir)
 		for asset_dir in make_asset_array:
 			make_dir(get_assets_path() + asset_dir)
-		#copy_dir_recursive(_addon_resources + _scenes, get_game_path() + _scenes)
+		copy_dir_recursive(_addon_resources + _scenes + "/" + _copy_to_game, get_game_path() + _scenes)
 	load_state()
 	
 func copy_dir_recursive(from_dir:String, to_dir:String): ## <--
@@ -61,7 +50,8 @@ func copy_dir_recursive(from_dir:String, to_dir:String): ## <--
 				DirAccess.make_dir_absolute(to_dir + "/" + next_item)
 				copy_dir_recursive(dir.get_current_dir() + "/" + next_item + "/", to_dir + "/" + next_item)
 			else:
-				DirAccess.copy_absolute(dir.get_current_dir() + "/" + next_item, to_dir + "/" + next_item)
+				if not FileAccess.file_exists(to_dir + "/" + next_item):
+					DirAccess.copy_absolute(dir.get_current_dir() + "/" + next_item, to_dir + "/" + next_item)
 		dir.list_dir_end()
 	else:
 		_logs.error("{0} service > An error occurred when trying to access the path {1}".format([name, from_dir]))
@@ -199,98 +189,7 @@ func find_all_cfg_files_dict(start_dir:String)->Dictionary:
 	var result:Dictionary
 	find_all_files_recursive(start_dir, _cfg_extension, result)
 	return result
-	
 
-# ================ Assets ================================================
-#func find_all_assets_dir_names(assets_type:String)->PackedStringArray:
-#	var result:Dictionary
-#	find_all_dirs_recursive(get_assets_path(assets_type), result)
-#	return result.keys()
-
-#func find_all_assets_cfg_files_dict(assets_type:String)->Dictionary:
-#	var result:Dictionary
-#	find_all_files_recursive(get_assets_path(assets_type), _cfg_extension, result)
-#	return result
-	
-#func find_all_assets_tscn_files_dict(assets_type:String)->Dictionary:
-#	var result:Dictionary
-#	find_all_files_recursive(get_assets_path(assets_type), _scene_extension, result)
-#	return result
-	
-#func find_all_assets_tscn_names(assets_type:String)->PackedStringArray:
-#	var result:Dictionary
-#	find_all_files_recursive(get_assets_path(assets_type), _scene_extension, result)
-#	return result.keys()
-	
-#func find_all_assets_cfg_names(assets_type:String)->PackedStringArray:
-#	var result:Dictionary
-#	find_all_files_recursive(get_assets_path(assets_type), _cfg_extension, result)
-#	return result.keys()
-	
-#func find_all_assets_sound_names(assets_type:String)->PackedStringArray:
-#	var result:Dictionary
-#	find_all_files_recursive(get_assets_path(assets_type), _sound_extension, result)
-#	return result.keys()
-
-
-#func get_asset_cfg_dict(assets_type:String, cfg_name:String)->Dictionary:
-#	return load_dict_from_cfg_file(get_assets_path(assets_type) + "/" + cfg_name)
-
-#func get_asset_tscn(assets_type:String, scene_name:String)->PackedScene:
-#	var _path = get_assets_path(assets_type) + "/" + scene_name + "." + _scene_extension
-#	var scene:PackedScene = load(_path)
-#	return scene
-
-#func save_asset_cfg(assets_type:String, cfg_name:String, dict:Dictionary):
-#	save_dict_to_cfg_file(get_assets_path(assets_type) + "/" + cfg_name, dict)
-	
-#func get_asset_tscn_path(assets_type:String, scene_name:String):
-#	var path = get_assets_path(assets_type) + "/" + scene_name + "." + _scene_extension
-#	return path if FileAccess.file_exists(path) else ""
-	
-#func get_asset_cfg_path(assets_type:String, cfg_name:String):
-#	var path = get_assets_path(assets_type) + "/" + cfg_name + "." + _cfg_extension
-#	return path if FileAccess.file_exists(path) else ""
-	
-#func get_asset_sound_path(assets_type:String, sound_name:String):
-#	var path = get_assets_path(assets_type) + "/" + sound_name + "." + _sound_extension
-#	return path if FileAccess.file_exists(path) else ""
-
-#func remove_asset(assets_type:String, _name:String):
-#	remove_file(get_asset_tscn_path(assets_type, _name))
-#	remove_file(get_asset_cfg_path(assets_type, _name))
-	
-#func find_text_in_assets(assets_type:String, find_text:String)->PackedStringArray:
-#	var paths = find_all_assets_cfg_files_dict(assets_type)
-#	return find_in_text_files(paths, find_text)
-	
-#func rename_asset(assets_type:String, old_name:String, new_name:String):
-#	rename_file(get_asset_tscn_path(assets_type, old_name), new_name)
-#	rename_file(get_asset_cfg_path(assets_type, old_name), new_name)
-	
-#func _get_new_clone_name(assets_type:String, assets_name:String, suffix:String)->String:
-#	var new_name = assets_name
-#	var assets = find_all_assets_cfg_names(assets_type)
-#	while new_name in assets:
-#		new_name += suffix
-#	return new_name
-	
-#func clone_asset(assets_type:String, asset_name:String):
-#	var new_name = _get_new_clone_name(assets_type, asset_name, _clone_suffix)
-#	var old_path = get_asset_cfg_path(assets_type, asset_name)
-#	var new_path = get_assets_path(assets_type) + "/" + new_name + "." + _cfg_extension
-#	if not old_path.is_empty():
-#		if DirAccess.copy_absolute(old_path, new_path) != OK:
-#			_logs.error("{0} service > error when copy asset {1} to {2}.".format([name, asset_name, new_path]))
-#	else:
-#		_logs.error("{0} service > path to asset {1} in {2} not exist.".format([name, asset_name, old_path]))
-		
-#func create_asset(assets_type:String, dict:Dictionary = {})->String:
-#	var new_name = _get_new_clone_name(assets_type, _default_name, _new_suffix)
-#	save_asset_cfg(assets_type, new_name, dict)
-#	return new_name
-# =======================================================================
-	
 func find_all_cfg_files_array(start_dir:String)->Array:
 	return find_all_files_dict(start_dir, _cfg_extension).keys()
 	

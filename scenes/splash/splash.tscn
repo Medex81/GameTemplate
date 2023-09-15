@@ -1,11 +1,23 @@
-[gd_scene load_steps=5 format=3 uid="uid://b4fiaijnbu4kl"]
+[gd_scene load_steps=6 format=3 uid="uid://b4fiaijnbu4kl"]
 
+[ext_resource type="Script" path="res://addons/GameTemplate/scenes/splash/splash.gd" id="1_ecya8"]
 [ext_resource type="Texture2D" uid="uid://cbhx4vrkbqocv" path="res://addons/GameTemplate/scenes/splash/backend.png" id="1_wnhow"]
 [ext_resource type="Texture2D" uid="uid://dp56kost1pjfm" path="res://addons/GameTemplate/scenes/splash/logo.png" id="3_64fmu"]
 [ext_resource type="Texture2D" uid="uid://ciyr2j0xblr12" path="res://addons/GameTemplate/scenes/splash/name.png" id="4_5vaxt"]
 [ext_resource type="PackedScene" uid="uid://gcome6s1gse4" path="res://addons/GameTemplate/scenes/indicator/indicator.tscn" id="5_jme2b"]
 
-[node name="splash" type="TextureRect"]
+[node name="splash" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ecya8")
+metadata/_edit_group_ = true
+
+[node name="splash" type="TextureRect" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -15,9 +27,8 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 texture = ExtResource("1_wnhow")
 stretch_mode = 6
-metadata/_edit_use_anchors_ = true
 
-[node name="frame" type="MarginContainer" parent="."]
+[node name="frame" type="MarginContainer" parent="splash"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,7 +41,7 @@ theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 metadata/_edit_use_anchors_ = true
 
-[node name="logo" type="TextureRect" parent="frame"]
+[node name="logo" type="TextureRect" parent="splash/frame"]
 custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -40,7 +51,7 @@ expand_mode = 1
 stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="title" type="TextureRect" parent="frame"]
+[node name="title" type="TextureRect" parent="splash/frame"]
 custom_minimum_size = Vector2(600, 200)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -48,11 +59,18 @@ size_flags_vertical = 4
 texture = ExtResource("4_5vaxt")
 expand_mode = 1
 
-[node name="Control" type="Control" parent="frame"]
+[node name="Control" type="Control" parent="splash/frame"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
 
-[node name="indicator" parent="frame/Control" instance=ExtResource("5_jme2b")]
+[node name="indicator" parent="splash/frame/Control" instance=ExtResource("5_jme2b")]
 position = Vector2(0, -93)
 timer_sec = 0.1
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
