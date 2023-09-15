@@ -1,14 +1,14 @@
 ## Сервис инвентаря.
 @tool
-extends Node
+extends BaseService
 
 class_name Inventory
 
-var _logs:LoggotLogger = Services.logs
 var _resources:Resources = Services.resources
 var _globals:Globals = Services.globals
 
 func _ready():
+	super._ready()
 	## Из этой группы будем получать события предметов для инвентаря(определена в глобальном скрипте).
 	add_to_group(_globals.get_group_name(Globals.Groups.INVENTORY_ITEM_EVENTS))
 

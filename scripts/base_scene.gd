@@ -2,7 +2,7 @@ extends Control
 
 class_name BaseScene
 
-var _logs:LoggotLogger = Services.logs
+var _logs:Log = Services.log
 
 @export_category("Initialization")
 @export_file("*.tscn") var next_scene:String

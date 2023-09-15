@@ -1,8 +1,7 @@
 @tool
-extends Node
+extends BaseService
 
 class_name Resources
-
 
 #const _timer_timeout = 0.5
 # Путь к файлам конфигурации интерактивов
@@ -26,7 +25,6 @@ const _state_name = "state"
 const _scenes = "scenes"
 
 #var _queue_to_load:PackedStringArray
-var _logs:LoggotLogger = Services.logs
 #var _timer:Timer = null
 #var progress:Array[float]
 var make_game_array:PackedStringArray = [_game_locations, _game_scenes]
@@ -37,7 +35,7 @@ signal send_resource_loaded(path:String, res:Resource)
 signal send_resource_progress(progress:float)
 
 func _ready():
-	assert(_logs)
+	super._ready()
 #	_logs.info("{0} service > ready".format([name]))
 #	_timer = Timer.new()
 #	add_child(_timer)
@@ -162,7 +160,11 @@ func save_dict_to_cfg_file(path:String, dict:Dictionary):
 	else:
 		var message = "{0} service > File error(save):{1}, {2}".format([name, Helper.error_str[FileAccess.get_open_error()], _path])
 		OS.alert(message)
+		
+func get_pwd()->String:
+	return _pwd
 	
+		
 func load_dict_from_cfg_file(path:String)->Dictionary:
 	var _path = path + "." + _cfg_extension
 	if FileAccess.file_exists(_path):

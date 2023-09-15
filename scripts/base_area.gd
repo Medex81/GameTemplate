@@ -4,7 +4,7 @@ extends Node2D
 class_name BaseArea
 
 ## Минимальный набор сервисов необходимый для уровня.
-var _logs:LoggotLogger = Services.logs
+var _logs:Log = Services.log
 var _resources:Resources = Services.resources
 var _globals:Globals = Services.globals
 var _inventory:Inventory = Services.inventory
@@ -22,6 +22,7 @@ var end_conditions:Dictionary
 signal send_close()
 
 func _ready():
+	_logs.info("{0} area > ready".format([name]))
 	for group in add_to_groups:
 		add_to_group(_globals.get_group_name(group))
 	## Перекладываем условия в более удобный контейнер.
@@ -36,6 +37,9 @@ func _ready():
 				item.queue_free()
 			else:
 				_logs.error("{0} > error when load condition item path {1}".format([name, condition.item_path]))
+				
+func _exit_tree():
+	_logs.info("{0} area > exit tree".format([name]))
 
 ## Общий обработчик событий предметов уровня.
 func on_area_item_events(item_name:String, event_type:BaseItem.Event, item_count:int):
